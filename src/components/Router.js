@@ -3,11 +3,10 @@ import { Routes, Route } from "react-router-dom";
 import Auth from "../routes/Auth";
 import Home from "../routes/Home";
 
-const AppRouter = () => {
-  const [isLoggidIn, setIsLoggidIn] = useState(false);
+const AppRouter = ({ isLoggedIn }) => {
   return (
     <Routes>
-      {isLoggidIn ? (
+      {isLoggedIn ? (
         <Route path="/" element={<Home />} /> //참
       ) : (
         <Route path="/" element={<Auth />} /> //거짓
