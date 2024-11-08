@@ -5,6 +5,8 @@ import {
   getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
 } from "firebase/auth";
 
 const Auth = () => {
@@ -48,7 +50,7 @@ const Auth = () => {
           console.log(user);
         })
         .catch((error) => {
-          const errorCode = error.code;
+          //const errorCode = error.code;
           const errorMessage = error.message;
           setError(errorMessage);
         });
@@ -60,7 +62,7 @@ const Auth = () => {
           const user = userCredential.user;
         })
         .catch((error) => {
-          const errorCode = error.code;
+          // const errorCode = error.code;
           const errorMessage = error.message;
           setError(errorMessage);
         });
@@ -68,6 +70,25 @@ const Auth = () => {
   };
   const toggleAccount = () => {
     setNewAccount((prev) => !prev);
+  };
+
+  const onGoogleSignin = () => {
+    const provider = new GoogleAuthProvider();
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential.accessToken;
+        const user = result.user;
+        console.log(token, user);
+      })
+      .catch((error) => {
+        // const errorCode = error.code;
+        const errorMessage = error.message;
+        const email = error.customData.email;
+        const credential = GoogleAuthProvider.credentialFromError(error);
+        setError(errorMessage);
+        console.log(email, credential);
+      });
   };
   return (
     <div className="container">
@@ -89,8 +110,18 @@ const Auth = () => {
         <Button variant="primary" type="submit">
           {newAccount ? "회원가입" : "로그인"}
         </Button>
-        <div>{error}</div>
       </Form>
+      <div>{error}</div>
+      <hr />
+      {newAccount ? (
+        <Button variant="outline-info" onClick={onGoogleSignin}>
+          구글로 회원가입
+        </Button>
+      ) : (
+        <Button variant="info" onClick={onGoogleSignin}>
+          구글로 로그인
+        </Button>
+      )}
       <hr />
       <Button variant="secondary" onClick={toggleAccount}>
         {newAccount ? "로그인으로 전환" : "회원가입으로 전환"}
