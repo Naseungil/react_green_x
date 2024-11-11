@@ -39,7 +39,7 @@ const Comment = ({ commentObj, isOwner }) => {
 
   return (
     <ListGroup.Item>
-      <div className="d-flex justify-content-between">
+      <div className="d-flex flex-column">
         {edit ? (
           <Form onSubmit={onSubmit}>
             <Form.Group className="mb-3" controlId="comment">
@@ -50,7 +50,7 @@ const Comment = ({ commentObj, isOwner }) => {
                 placeholder="글을 입력해주세요"
               />
             </Form.Group>
-            <div className="d-flex gap-1 justify-content-end">
+            <div className="d-flex gap-1">
               <Button type="submit" variant="success">
                 입력
               </Button>
@@ -62,8 +62,13 @@ const Comment = ({ commentObj, isOwner }) => {
         ) : (
           <>
             {commentObj.comment}
+            {commentObj.image && (
+              <div>
+                <img src={commentObj.image} alt="" width="100" />
+              </div>
+            )}
             {isOwner && (
-              <div className="d-flex gap-1">
+              <div className="d-flex gap-1 align-self-end">
                 <Button variant="secondary" onClick={toggleEditMode} size="sm">
                   수정
                 </Button>
