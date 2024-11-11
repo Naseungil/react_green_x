@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import Form from "react-bootstrap/Form";
 import { Button } from "react-bootstrap";
+import { db } from "../firebase";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
 const Home = () => {
   const [comment, setComment] = useState("");
@@ -11,20 +13,33 @@ const Home = () => {
     } = e; //비구조할당
     setComment(value);
   };
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
+
+    try {
+      const docRef = await addDoc(collection(db, "comments"), {
+        comment: comment,
+        date: serverTimestamp(),
+      });
+      console.log("Document written with ID: ", docRef.id);
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
   };
+
   return (
     <div className="container">
       <Form onSubmit={onSubmit}>
-        <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+        <Form.Group className="mb-3" controlId="comment">
           <Form.Control
-            type="email"
+            type="text"
             onChange={onChange}
             placeholder="글을 입력해주세요"
           />
         </Form.Group>
-        <Button variant="primary">입력</Button>
+        <Button type="submit" variant="primary">
+          입력
+        </Button>
       </Form>
     </div>
   );
