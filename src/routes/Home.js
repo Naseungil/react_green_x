@@ -90,7 +90,7 @@ const Home = ({ userObj }) => {
           return (
             <Comment
               key={item.id}
-              isOwener={item.id === userObj}
+              isOwener={item.uid === userObj}
               commentObj={item}
             />
           );
