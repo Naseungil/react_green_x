@@ -12,6 +12,7 @@ import {
   getDocs,
   orderBy,
   limit,
+  onSnapshot,
 } from "firebase/firestore";
 
 const Home = ({ userObj }) => {
@@ -19,6 +20,7 @@ const Home = ({ userObj }) => {
   const [comments, setComments] = useState([]); //조회 된 글 배열
 
   const getComments = async () => {
+    /*
     const q = query(
       collection(db, "comments"),
       orderBy("date", "desc"),
@@ -26,7 +28,6 @@ const Home = ({ userObj }) => {
     );
 
     const querySnapshot = await getDocs(q);
-    /*
     querySnapshot.forEach((doc) => {
       // doc.data() is never undefined for query doc snapshots
       const commentObj = {
@@ -37,12 +38,26 @@ const Home = ({ userObj }) => {
     });
     */
     //const commentArr = querySnapshot.docs.map(doc=>{return {...doc.data(),id:doc.id}});
+    /*
     const commentArr = querySnapshot.docs.map((doc) => ({
       ...doc.data(),
       id: doc.id,
     }));
-    setComments(commentArr);
+    */
+
+    const q = query(
+      collection(db, "comments"),
+      orderBy("date", "desc"),
+      limit(5)
+    );
+    onSnapshot(q, (querySnapshot) => {
+      const commentArr = querySnapshot.docs.map((doc) => {
+        return { ...doc.data(), id: doc.id };
+      });
+      setComments(commentArr);
+    });
   };
+
   useEffect(() => {
     getComments();
   }, []); //최초 렌더링후 실행,변동시 실행
@@ -57,14 +72,13 @@ const Home = ({ userObj }) => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-
     try {
       const docRef = await addDoc(collection(db, "comments"), {
         comment: comment,
         date: serverTimestamp(),
         uid: userObj,
       });
-      console.log("Document written with ID: ", docRef.id);
+      document.querySelector("#comment").value = "";
     } catch (e) {
       console.error("Error adding document: ", e);
     }
