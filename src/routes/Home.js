@@ -4,6 +4,8 @@ import { Button } from "react-bootstrap";
 import { db } from "../firebase";
 import ListGroup from "react-bootstrap/ListGroup";
 import Comment from "../components/Comment";
+import { getStorage, ref } from "firebase/storage";
+import { v4 as uuidv4 } from "uuid";
 import {
   collection,
   addDoc,
@@ -19,6 +21,12 @@ const Home = ({ userObj }) => {
   const [comment, setComment] = useState(""); //입력하는 글 정보
   const [comments, setComments] = useState([]); //조회 된 글 배열
   const [attachment, setAttachment] = useState();
+
+  // Get a reference to the storage service, which is used to create references in your storage bucket
+  const storage = getStorage();
+
+  // Create a storage reference from our storage service
+  const storageRef = ref(storage);
 
   const getComments = async () => {
     /*
@@ -133,17 +141,21 @@ const Home = ({ userObj }) => {
             onChange={onFileChange}
           />
         </Form.Group>
-        <div className="mb-1 d-flex gap-1">
-          {attachment && <img src={attachment} alt="" width="50" />}
-          <Button
-            onClick={onClearFile}
-            type="button"
-            variant="danger"
-            size="sm"
-          >
-            취소
-          </Button>
-        </div>
+
+        {attachment && (
+          <div className="mb-1 d-flex gap-1">
+            <img src={attachment} alt="" width="50" />
+            <Button
+              onClick={onClearFile}
+              type="button"
+              variant="danger"
+              size="sm"
+            >
+              취소
+            </Button>
+          </div>
+        )}
+
         <Button type="submit" variant="primary">
           입력
         </Button>
