@@ -5,7 +5,7 @@ import { doc, deleteDoc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import Form from "react-bootstrap/Form";
 
-const Comment = ({ commentObj, isOwener }) => {
+const Comment = ({ commentObj, isOwner }) => {
   const [edit, setEdit] = useState(false);
   const [comment, setComment] = useState(commentObj.comment);
 
@@ -62,7 +62,7 @@ const Comment = ({ commentObj, isOwener }) => {
         ) : (
           <>
             {commentObj.comment}
-            {isOwener && (
+            {isOwner && (
               <div className="d-flex gap-1">
                 <Button variant="secondary" onClick={toggleEditMode} size="sm">
                   수정

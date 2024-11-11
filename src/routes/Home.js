@@ -18,6 +18,7 @@ import {
 const Home = ({ userObj }) => {
   const [comment, setComment] = useState(""); //입력하는 글 정보
   const [comments, setComments] = useState([]); //조회 된 글 배열
+  const [attachment, setAttachment] = useState();
 
   const getComments = async () => {
     /*
@@ -84,12 +85,32 @@ const Home = ({ userObj }) => {
     }
   };
   const onFileChange = (e) => {
-    console.log(e.target.files[0]);
     /*
     const { target: {files} } = e;
     const theFile = files[0];
     */
     const theFile = e.target.files[0];
+    const reader = new FileReader();
+    /*
+    reader.addEventListener(
+      "load",
+      (e) => {
+        console.log(e.target.result)
+     
+      },
+      false
+    );
+  */
+    reader.onloadend = (e) => {
+      setAttachment(e.target.result);
+    };
+    if (theFile) {
+      reader.readAsDataURL(theFile);
+    }
+  };
+
+  const onClearFile = () => {
+    setAttachment(null);
   };
 
   return (
@@ -112,7 +133,17 @@ const Home = ({ userObj }) => {
             onChange={onFileChange}
           />
         </Form.Group>
-
+        <div className="mb-1 d-flex gap-1">
+          {attachment && <img src={attachment} alt="" width="50" />}
+          <Button
+            onClick={onClearFile}
+            type="button"
+            variant="danger"
+            size="sm"
+          >
+            취소
+          </Button>
+        </div>
         <Button type="submit" variant="primary">
           입력
         </Button>
@@ -123,7 +154,7 @@ const Home = ({ userObj }) => {
           return (
             <Comment
               key={item.id}
-              isOwener={item.uid === userObj}
+              isOwner={item.uid === userObj}
               commentObj={item}
             />
           );
