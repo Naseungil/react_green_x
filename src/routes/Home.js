@@ -9,16 +9,21 @@ import {
   addDoc,
   serverTimestamp,
   query,
-  where,
   getDocs,
+  orderBy,
+  limit,
 } from "firebase/firestore";
 
-const Home = () => {
+const Home = ({ userObj }) => {
   const [comment, setComment] = useState(""); //입력하는 글 정보
   const [comments, setComments] = useState([]); //조회 된 글 배열
 
   const getComments = async () => {
-    const q = query(collection(db, "comments"));
+    const q = query(
+      collection(db, "comments"),
+      orderBy("date", "desc"),
+      limit(5)
+    );
 
     const querySnapshot = await getDocs(q);
     /*
@@ -57,6 +62,7 @@ const Home = () => {
       const docRef = await addDoc(collection(db, "comments"), {
         comment: comment,
         date: serverTimestamp(),
+        uid: userObj,
       });
       console.log("Document written with ID: ", docRef.id);
     } catch (e) {
@@ -81,7 +87,13 @@ const Home = () => {
       <hr />
       <ListGroup>
         {comments.map((item) => {
-          return <Comment commentObj={item} />;
+          return (
+            <Comment
+              key={item.id}
+              isOwener={item.id === userObj}
+              commentObj={item}
+            />
+          );
         })}
       </ListGroup>
     </div>
