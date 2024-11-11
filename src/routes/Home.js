@@ -4,14 +4,18 @@ import { Button } from "react-bootstrap";
 import { db } from "../firebase";
 import ListGroup from "react-bootstrap/ListGroup";
 import Comment from "../components/Comment";
-import { getStorage, ref } from "firebase/storage";
+import {
+  getStorage,
+  ref,
+  uploadString,
+  getDownloadURL,
+} from "firebase/storage";
 import { v4 as uuidv4 } from "uuid";
 import {
   collection,
   addDoc,
   serverTimestamp,
   query,
-  getDocs,
   orderBy,
   limit,
   onSnapshot,
@@ -81,16 +85,22 @@ const Home = ({ userObj }) => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const docRef = await addDoc(collection(db, "comments"), {
-        comment: comment,
-        date: serverTimestamp(),
-        uid: userObj,
-      });
-      document.querySelector("#comment").value = "";
-    } catch (e) {
-      console.error("Error adding document: ", e);
-    }
+    const storageRef = ref(storage, `${userObj}/${uuidv4()}`);
+    uploadString(storageRef, attachment, "data_url").then(async (snapshot) => {
+      const imageURL = await getDownloadURL(storageRef);
+      try {
+        await addDoc(collection(db, "comments"), {
+          comment: comment,
+          date: serverTimestamp(),
+          uid: userObj,
+          image: imageURL,
+        });
+        document.querySelector("#comment").value = "";
+        setAttachment("");
+      } catch (e) {
+        console.error("Error adding document: ", e);
+      }
+    });
   };
   const onFileChange = (e) => {
     /*
