@@ -3,6 +3,7 @@ import Form from "react-bootstrap/Form";
 import { Button } from "react-bootstrap";
 import { db } from "../firebase";
 import ListGroup from "react-bootstrap/ListGroup";
+import Comment from "../components/Comment";
 import {
   collection,
   addDoc,
@@ -80,7 +81,7 @@ const Home = () => {
       <hr />
       <ListGroup>
         {comments.map((item) => {
-          return <ListGroup.Item>{item.comment}</ListGroup.Item>;
+          return <Comment commentObj={item} />;
         })}
       </ListGroup>
     </div>
