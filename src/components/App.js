@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
-import { authService } from "../firebase";
 import AppRouter from "./Router";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-
-console.log(authService);
 
 function App() {
   const [isLoggedIn, setIsLoggidIn] = useState(false);
   const [init, setInit] = useState(false); //로그인 여부 확인 시작 여부
+  const [userObj, setUserObj] = useState(null);
 
   useEffect(() => {
     const auth = getAuth();
@@ -17,6 +15,7 @@ function App() {
       if (user) {
         //유저정보가 있다면
         setIsLoggidIn(true);
+        setUserObj(user.uid);
       } else {
         setIsLoggidIn(false);
       }
@@ -24,7 +23,13 @@ function App() {
     });
   }, []);
   return (
-    <>{init ? <AppRouter isLoggedIn={isLoggedIn} /> : "Initializing...."}</>
+    <>
+      {init ? (
+        <AppRouter userObj={userObj} isLoggedIn={isLoggedIn} />
+      ) : (
+        "Initializing...."
+      )}
+    </>
   );
 }
 
