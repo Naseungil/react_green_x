@@ -83,6 +83,14 @@ const Home = ({ userObj }) => {
       console.error("Error adding document: ", e);
     }
   };
+  const onFileChange = (e) => {
+    console.log(e.target.files[0]);
+    /*
+    const { target: {files} } = e;
+    const theFile = files[0];
+    */
+    const theFile = e.target.files[0];
+  };
 
   return (
     <div className="container">
@@ -94,6 +102,17 @@ const Home = ({ userObj }) => {
             placeholder="글을 입력해주세요"
           />
         </Form.Group>
+
+        <Form.Group controlId="formFileSm" className="mb-3">
+          <Form.Label>이미지</Form.Label>
+          <Form.Control
+            type="file"
+            accept="image/*"
+            size="sm"
+            onChange={onFileChange}
+          />
+        </Form.Group>
+
         <Button type="submit" variant="primary">
           입력
         </Button>
