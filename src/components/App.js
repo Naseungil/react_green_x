@@ -16,6 +16,7 @@ function App() {
         //유저정보가 있다면
         setIsLoggidIn(true);
         setUserObj(user.uid);
+        console.log(user);
       } else {
         setIsLoggidIn(false);
       }
