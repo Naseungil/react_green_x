@@ -106,7 +106,7 @@ const Profile = () => {
       <h3>My Comment List</h3>
       <ListGroup>
         {comments.map((item) => {
-          return <Comment key={item.id} commentObj={item} />;
+          return <Comment key={item.id} commentObj={item} isOwner={true} />;
         })}
       </ListGroup>
     </div>
