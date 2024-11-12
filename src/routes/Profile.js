@@ -44,7 +44,7 @@ const Profile = () => {
   };
 
   useEffect(() => {
-    user.photoURL !== null && setProfile(authService.currentUser.photoURL);
+    user.photoURL !== null && setProfile(user.photoURL);
   }, []); //최초한번 실행, 값이 변경되면 실행
 
   return (
