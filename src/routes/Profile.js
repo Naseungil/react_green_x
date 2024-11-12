@@ -2,16 +2,47 @@ import React, { useEffect, useState } from "react";
 import { getAuth, signOut, updateProfile } from "firebase/auth";
 import Button from "react-bootstrap/Button";
 import { useNavigate } from "react-router-dom";
+import ListGroup from "react-bootstrap/ListGroup";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import Comment from "../components/Comment";
 import { authService } from "../firebase";
-console.log(authService);
+import {
+  collection,
+  query,
+  orderBy,
+  getDocs,
+  limit,
+  where,
+} from "firebase/firestore";
+import { db } from "../firebase";
 
 const Profile = () => {
   const user = authService.currentUser;
   const profilePath = `${process.env.PUBLIC_URL}/profile_icon.svg`;
   const [profile, setProfile] = useState(profilePath);
-
+  const [comments, setComments] = useState([]); //조회 된 글 배열
   const navigate = useNavigate();
+
+  const getComments = async () => {
+    const q = query(
+      collection(db, "comments"),
+      where("uid", "==", user.uid),
+      orderBy("date", "desc"),
+      limit(5)
+    );
+    const querySnapshot = await getDocs(q);
+
+    const commentArr = querySnapshot.docs.map((doc) => ({
+      ...doc.data(),
+      id: doc.id,
+    }));
+    setComments(commentArr);
+  };
+
+  useEffect(() => {
+    getComments();
+  }, []); //최초 렌더링후 실행,변동시 실행
+
   const onLogoutClick = () => {
     const auth = getAuth();
     signOut(auth)
@@ -63,14 +94,21 @@ const Profile = () => {
         onChange={updateLogo}
       />
 
-      <label htmlFor="profile" className="btn btn-primary">
-        프로필 이미지 변경
-      </label>
-
+      <div className="d-flex gap-1">
+        <label htmlFor="profile" className="btn btn-primary">
+          프로필 이미지 변경
+        </label>
+        <Button variant="primary" onClick={onLogoutClick}>
+          로그아웃
+        </Button>
+      </div>
       <hr />
-      <Button variant="primary" onClick={onLogoutClick}>
-        로그아웃
-      </Button>
+      <h3>My Comment List</h3>
+      <ListGroup>
+        {comments.map((item) => {
+          return <Comment key={item.id} commentObj={item} />;
+        })}
+      </ListGroup>
     </div>
   );
 };
