@@ -27,7 +27,7 @@ const Profile = () => {
       </div>
 
       <input
-        type="text"
+        type="file"
         className="hidden"
         accept="image/*"
         name="profile"
